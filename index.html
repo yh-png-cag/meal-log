@@ -3,30 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f7f5">
-<title>食事とトレーニング</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>食事・筋トレ管理</title>
+<style>
+:root{color-scheme:light;--ink:#202522;--muted:#727a75;--line:#e4e8e4;--bg:#f6f8f6;--green:#326b50;--soft:#e8f1eb;--p:#4f83cc;--f:#e5a23b;--c:#45a779;--red:#b64b3b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+main{max-width:760px;margin:auto;padding:20px 15px 28px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+h1{font-size:23px;margin:0;letter-spacing:-.03em}h2{font-size:17px;margin:0 0 13px}h3{font-size:15px;margin:0}
+small,.muted,.summary{color:var(--muted)}small{font-size:12px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0}
+.eyebrow{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.07em}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:5px 0 12px}.big{font-size:34px;font-weight:750;letter-spacing:-.04em}.goal{font-size:12px;color:var(--muted);text-align:right}
+.track{height:7px;border-radius:9px;background:#edf0ed;overflow:hidden}.fill{height:100%;background:var(--green);border-radius:9px}
+.pfc-scale{position:relative;margin-top:16px}.pfc-stack{display:flex;height:16px;overflow:hidden;border-radius:5px;background:#edf0ed}.pfc-seg{height:100%;min-width:0}.pfc-p{background:var(--p)}.pfc-f{background:var(--f)}.pfc-c{background:var(--c)}
+.pfc-scale-label{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin-top:4px}.pfc-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
+.pfc-key{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);white-space:nowrap}.pfc-dot{width:8px;height:8px;border-radius:3px;flex:none}.pfc-key b{color:var(--ink);font-weight:650;margin-left:auto;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.metric{background:var(--bg);padding:11px;border-radius:11px;min-width:0}.metric b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric span{font-size:11px;color:var(--muted)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;color:var(--ink);font:inherit;font-size:13px}
+.range-switch{display:flex;gap:6px}.range-switch button,.month-nav button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font:inherit;font-size:12px;color:var(--muted)}.range-switch button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.day-list{display:grid;gap:11px}.day-row{display:grid;grid-template-columns:42px minmax(0,1fr) 67px;gap:8px;align-items:center;font-size:12px}.day-date{color:var(--muted)}.trend-pfc{height:10px;display:flex;overflow:hidden;border-radius:4px;background:#edf0ed}.trend-pfc span{height:100%;min-width:0}.day-row.missing{opacity:.55}.day-row.missing .trend-pfc{background:repeating-linear-gradient(135deg,#e4e8e4,#e4e8e4 4px,#fff 4px,#fff 8px)}.trend-legend{font-size:10px;color:var(--muted);margin:3px 0 0 50px}
+.settings-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 9px;font:inherit;font-size:12px;color:var(--green)}.settings-panel{background:var(--bg);border-radius:12px;padding:12px;margin-bottom:12px}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings-grid label{font-size:12px;color:var(--muted)}.settings-grid input{width:100%;margin-top:4px;padding:9px;border:1px solid var(--line);border-radius:8px;background:white;font:inherit;color:var(--ink)}.settings-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.settings-actions button{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:white;font:inherit}.settings-actions .save{background:var(--green);color:white;border-color:var(--green)}
+.summary{font-size:12px;margin:12px 0 0}.notice{padding:12px;background:var(--bg);border-radius:10px;color:var(--muted);font-size:13px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+.bottom-nav button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:650;padding:9px 24px;border-radius:11px;min-width:112px}.bottom-nav button.active{background:var(--soft);color:var(--green)}
+.hidden{display:none!important}.error{background:#fff0ed;color:#922f20;padding:13px;border-radius:12px}.badge{font-size:10px;background:var(--soft);color:var(--green);padding:4px 7px;border-radius:7px;font-weight:700}
+.month-nav{display:flex;align-items:center;gap:10px}.month-nav strong{min-width:92px;text-align:center;font-size:14px}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.calendar-weekday{text-align:center;font-size:11px;color:var(--muted);padding:4px 0}.calendar-day{position:relative;min-height:42px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-size:13px}.calendar-day:disabled{opacity:.25}.calendar-day.selected{background:var(--soft);border-color:var(--green);font-weight:750}.calendar-day.has-workout{border:2px solid var(--green);background:#edf5ef;font-weight:750;color:var(--green)}.calendar-day.has-workout:after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--green)}.calendar-day.selected.has-workout{background:#dcebe0;border-width:2px;box-shadow:inset 0 0 0 1px #fff}.calendar-day.selected.has-workout:after{background:var(--green)}.calendar-legend{font-size:11px;color:var(--muted);margin-top:8px}.selected-date-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}.selected-date-head strong{font-size:15px}.workout-day{margin:0}.workout-date{font-size:13px;font-weight:750;margin-bottom:8px;display:flex;justify-content:space-between}.exercise{width:100%;text-align:left;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border:0;border-top:1px solid var(--line);background:#fff;color:var(--ink);font:inherit}.exercise-name{font-weight:650}.exercise-meta{font-size:12px;color:var(--muted);margin-top:2px}.chevron{color:var(--muted);font-size:19px}
+.back{border:0;background:transparent;padding:0;color:var(--green);font:inherit;font-weight:700;margin-bottom:12px}
+.stat-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:var(--bg);border-radius:12px;padding:13px}.stat .value{font-size:22px;font-weight:750;display:block}.stat .label{font-size:11px;color:var(--muted)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px}.compare .metric{padding:12px}.delta{font-size:12px;margin-top:4px;font-weight:650}.positive{color:var(--green)}.negative{color:var(--red)}
+.chart-wrap{height:220px;position:relative;width:100%;margin-top:8px}canvas{width:100%;height:100%}
+.history-row{display:grid;grid-template-columns:66px minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line)}.history-date{font-size:12px;color:var(--muted)}.history-main{font-size:13px}.history-note{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+@media(min-width:600px){main{padding-top:28px}.panel{padding:20px}.big{font-size:40px}}
+</style>
 </head>
-<body><main>
-<header><div><h1>食事とトレーニング</h1><div class="status" id="statusText">Googleアカウント未接続</div></div><button class="btn" id="connectBtn">Googleに接続</button></header>
-<div id="configNotice" class="notice hidden">初期設定が必要です。READMEのGoogle OAuth設定を完了すると、個人のスプレッドシートを読み込めます。</div><div id="errorBox" class="error hidden"></div>
-<section id="mealView">
-<div class="tabs"><button class="active" data-period="today">今日</button><button data-period="7">7日間</button><button data-period="30">30日間</button></div>
-<div class="card"><div class="row"><div><div class="muted" id="periodLabel">今日の摂取カロリー</div><div class="metric"><span id="kcalNow">—</span><span class="unit"> kcal</span></div></div><div style="text-align:right"><div class="muted">目標</div><strong><span id="kcalGoalLabel">1,750</span> kcal</strong></div></div><div class="progress"><span id="kcalProgress" style="width:0%"></span></div><div class="row muted"><span id="kcalRemain">Googleに接続してください</span><button class="btn" id="settingsToggle">目標設定</button></div></div>
-<div class="card"><div class="row"><h2>PFCバランス</h2><span class="muted" id="pfcRatio">P 30% · F 30% · C 40%</span></div><div class="pfc">
-<div class="macro"><small>たんぱく質 P</small><strong><span id="pNow">—</span> g</strong><small>目標 <span id="pGoal">131</span>g</small><div class="mini"><span id="pProgress" class="p" style="width:0%"></span></div></div>
-<div class="macro"><small>脂質 F</small><strong><span id="fNow">—</span> g</strong><small>目標 <span id="fGoal">58</span>g</small><div class="mini"><span id="fProgress" class="f" style="width:0%"></span></div></div>
-<div class="macro"><small>炭水化物 C</small><strong><span id="cNow">—</span> g</strong><small>目標 <span id="cGoal">175</span>g</small><div class="mini"><span id="cProgress" class="c" style="width:0%"></span></div></div></div><small>目標比率からP=4、F=9、C=4 kcal/gで自動計算</small></div>
-<div class="card"><div class="row"><h2>水分</h2><small id="waterGoalLabel">目標 1,800 mL</small></div><div class="row"><div class="metric"><span id="waterNow">—</span><span class="unit"> mL</span></div><div style="flex:1"><div class="progress"><span id="waterProgress" style="width:0%"></span></div><small id="waterHint"></small></div></div></div>
-<div class="card"><div class="row"><h2 id="trendTitle">直近7日間のPFC</h2><small>記録日のみ</small></div><div id="trendChart" class="chart"></div><small>棒グラフはPFCの構成、数値はkcal</small></div>
-<div class="card"><h2>食事記録</h2><div id="mealList" class="empty">Googleに接続すると記録が表示されます。</div></div>
-<div class="card hidden" id="settingsCard"><h2>目標設定</h2><div class="settings">
-<div class="field"><label for="goalKcal">目標カロリー (kcal)</label><input id="goalKcal" type="number" min="500" max="6000" step="50"></div><div class="field"><label for="goalWater">水分目標 (mL)</label><input id="goalWater" type="number" min="0" max="6000" step="100"></div>
-<div class="field"><label for="ratioP">P 比率 (%)</label><input id="ratioP" type="number" min="0" max="100"></div><div class="field"><label for="ratioF">F 比率 (%)</label><input id="ratioF" type="number" min="0" max="100"></div><div class="field"><label for="ratioC">C 比率 (%)</label><input id="ratioC" type="number" min="0" max="100"></div><div class="field"><label>比率合計</label><strong id="ratioSum">100%</strong></div>
-</div><div class="row" style="margin-top:14px"><small>このブラウザーに保存</small><button class="btn primary" id="saveSettings">保存</button></div></div>
+<body>
+<main>
+<header><div><h1 id="pageTitle">食事</h1><small id="stamp">Googleアカウント未接続</small></div><button id="connectBtn" class="settings-btn">Googleに接続</button><span class="badge">READ ONLY</span></header>
+<div id="error" class="error hidden"></div>
+<section id="mealScreen">
+  <div class="panel">
+    <div class="sectionhead"><div class="eyebrow">TODAY'S INTAKE</div><button id="toggleSettings" class="settings-btn">目標を変更</button></div>
+    <div id="settingsPanel" class="settings-panel hidden"><div class="settings-grid">
+      <label>目標カロリー（kcal）<input id="inputGoalKcal" type="number" min="1" step="10"></label>
+      <label>たんぱく質 P（%）<input id="inputRatioP" type="number" min="0" max="100" step="1"></label>
+      <label>脂質 F（%）<input id="inputRatioF" type="number" min="0" max="100" step="1"></label>
+      <label>炭水化物 C（%）<input id="inputRatioC" type="number" min="0" max="100" step="1"></label>
+    </div><div class="notice" style="margin-top:10px"><b>自動計算</b><div id="goalCalcPreview">P — g（— kcal） / F — g（— kcal） / C — g（— kcal）</div><small id="ratioSumNote">PFC比率の合計を100%にしてください。</small></div><div class="settings-actions"><button id="cancelSettings">キャンセル</button><button id="saveSettings" class="save">保存</button></div><small>設定はアプリ側に保存され、更新後も引き継がれます。</small></div>
+    <div class="hero"><div><span class="big" id="kcal">—</span> <span class="muted">kcal</span></div><div class="goal">目標 <b id="goalKcal">1,750</b> kcal<br><span id="kcalDiff">—</span></div></div>
+    <div class="track"><div id="kcalFill" class="fill" style="width:0%"></div></div>
+    <div class="pfc-scale"><div class="pfc-stack" aria-label="PFC目標カロリーを最大目盛りとした積み上げバー"><div id="pSeg" class="pfc-seg pfc-p"></div><div id="fSeg" class="pfc-seg pfc-f"></div><div id="cSeg" class="pfc-seg pfc-c"></div></div><div class="pfc-scale-label"><span id="pfcCurrent">PFC由来 — kcal</span><span id="pfcGoal">目標 — kcal</span></div></div>
+    <div class="pfc-legend"><div class="pfc-key"><i class="pfc-dot pfc-p"></i>P <b id="pLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-f"></i>F <b id="fLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-c"></i>C <b id="cLegend">—</b></div></div>
+    <div class="grid" style="margin-top:15px">
+      <div class="metric"><span>たんぱく質 P</span><b id="p">—</b><span>目標 <span id="goalP">75</span> g</span><div id="pDiff" class="summary"></div></div>
+      <div class="metric"><span>脂質 F</span><b id="f">—</b><span>目標 <span id="goalF">60</span> g</span><div id="fDiff" class="summary"></div></div>
+      <div class="metric"><span>炭水化物 C</span><b id="c">—</b><span>目標 <span id="goalC">220</span> g</span><div id="cDiff" class="summary"></div></div>
+    </div>
+    <div class="sectionhead" style="margin-top:16px;margin-bottom:0"><h3>水分摂取量</h3><b id="water">—</b></div>
+    <p id="todayNote" class="summary"></p>
+  </div>
+  <div class="panel">
+    <div class="sectionhead"><h2 id="trendTitle">直近7日間</h2><div class="range-switch"><button data-range="7" class="active">7日</button><button data-range="30">30日</button></div></div>
+    <div id="trendList" class="day-list"></div>
+    <p id="trendNote" class="summary"></p>
+    <div class="grid" style="margin-top:14px">
+      <div class="metric"><span>平均 kcal</span><b id="avgKcal">—</b></div>
+      <div class="metric"><span>平均 P</span><b id="avgP">—</b></div>
+      <div class="metric"><span>平均 水分</span><b id="avgWater">—</b></div>
+    </div>
+  </div>
 </section>
-<section id="workoutView" class="hidden"><div class="card"><div class="calendar-head"><button class="btn" id="prevMonth">‹</button><h2 id="monthTitle"></h2><button class="btn" id="nextMonth">›</button></div><div class="calendar" id="calendar"></div><small>● トレーニング記録あり</small></div><div class="card"><h2 id="workoutDateTitle">トレーニング記録</h2><div id="workoutList" class="empty">Googleに接続すると記録が表示されます。</div></div><div class="card hidden" id="exerciseDetail"><div class="row"><h2 id="exerciseTitle"></h2><button class="btn" id="closeExercise">戻る</button></div><div id="exerciseHistory"></div></div></section>
-</main><nav class="bottom"><button class="active" data-view="meal">食事</button><button data-view="workout">トレーニング</button></nav>
-<script src="config.js"></script><script src="app.js"></script>
-</body></html>
+<section id="workoutScreen" class="hidden">
+  <div class="panel">
+    <div class="sectionhead"><h2>トレーニング</h2><div class="month-nav"><button id="prevMonth" aria-label="前の月">‹</button><strong id="monthLabel">—</strong><button id="nextMonth" aria-label="次の月">›</button></div></div>
+    <div id="workoutCalendar" class="calendar"></div>
+    <div class="calendar-legend">● トレーニング実施日</div>
+  </div>
+  <div class="panel">
+    <div class="selected-date-head"><strong id="selectedDateLabel">日付を選択</strong><span id="selectedDayCount" class="muted"></span></div>
+    <div id="workoutList"></div>
+    <div id="workoutEmpty" class="notice hidden">この日はトレーニング記録がありません。カレンダーの印が付いた日を選択してください。</div>
+  </div>
+</section>
+<section id="detailScreen" class="hidden">
+  <button id="backToList" class="back">‹ 筋トレ一覧に戻る</button>
+  <div class="panel">
+    <div class="eyebrow" id="detailPart">種目詳細</div><h2 id="detailName" style="font-size:22px;margin-top:4px">—</h2>
+  </div>
+  <div class="panel" id="chartPanel"><div class="sectionhead"><h2>重量の推移</h2><small>日付順</small></div><div class="chart-wrap"><canvas id="progressChart"></canvas></div><p id="chartNote" class="summary"></p></div>
+  <div class="panel"><h2>過去の記録</h2><div id="historyList"></div></div>
+</section>
+</main>
+<nav class="bottom-nav"><button id="navMeal" class="active">食事</button><button id="navWorkout">筋トレ</button></nav>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
