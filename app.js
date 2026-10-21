@@ -68,13 +68,8 @@ function renderMeal(){
  setText('goalKcal',fmt(g.kcal));setText('goalP',fmt(g.p));setText('goalF',fmt(g.f));setText('goalC',fmt(g.c));
  setText('kcal',today.recorded?fmt(today.kcal):'—');setText('p',today.recorded?fmt(today.p,1)+' g':'—');setText('f',today.recorded?fmt(today.f,1)+' g':'—');setText('c',today.recorded?fmt(today.c,1)+' g':'—');setText('water',today.recorded?fmt(today.water)+' mL':'—');
  setText('kcalDiff',today.recorded?diffLabel(today.kcal,g.kcal,'kcal'):'未記録');
- const kcalProgress=today.recorded?Math.min(100,Math.max(0,today.kcal/g.kcal*100)):0;
- $('kcalFill').style.width=kcalProgress+'%';
- const grams=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
- $('kcalP').style.width=grams?Math.max(0,today.p)/grams*100+'%':'0%';
- $('kcalF').style.width=grams?Math.max(0,today.f)/grams*100+'%':'0%';
- $('kcalC').style.width=grams?Math.max(0,today.c)/grams*100+'%':'0%';
  const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,gramsPfc=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
+ $('pfcProgress').style.width=today.recorded?Math.min(100,Math.max(0,today.kcal/g.kcal*100))+'%':'0%';
  $('pSeg').style.width=gramsPfc?Math.max(0,today.p)/gramsPfc*100+'%':'0%';$('fSeg').style.width=gramsPfc?Math.max(0,today.f)/gramsPfc*100+'%':'0%';$('cSeg').style.width=gramsPfc?Math.max(0,today.c)/gramsPfc*100+'%':'0%';
  setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(gramsPfc,1):'—'} g`);setText('pfcGoal','各色の割合＝P・F・Cの摂取グラム比');
  setText('pLegend',today.recorded?`${fmt(today.p,1)}g · ${gramsPfc?fmt(today.p/gramsPfc*100,1):'0.0'}%`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)}g · ${gramsPfc?fmt(today.f/gramsPfc*100,1):'0.0'}%`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)}g · ${gramsPfc?fmt(today.c/gramsPfc*100,1):'0.0'}%`:'—');
