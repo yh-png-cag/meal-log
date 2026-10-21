@@ -71,7 +71,7 @@ function renderMeal(){
  const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,gramsPfc=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
  $('pfcProgress').style.width=today.recorded?Math.min(100,Math.max(0,today.kcal/g.kcal*100))+'%':'0%';
  $('pSeg').style.width=gramsPfc?Math.max(0,today.p)/gramsPfc*100+'%':'0%';$('fSeg').style.width=gramsPfc?Math.max(0,today.f)/gramsPfc*100+'%':'0%';$('cSeg').style.width=gramsPfc?Math.max(0,today.c)/gramsPfc*100+'%':'0%';
- setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(gramsPfc,1):'—'} g`);setText('pfcGoal','各色の割合＝P・F・Cの摂取グラム比');
+ setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(gramsPfc,1):'—'} g`);setText('pfcGoal',`目標 ${fmt(g.kcal)} kcal`);
  setText('pLegend',today.recorded?`${fmt(today.p,1)}g · ${gramsPfc?fmt(today.p/gramsPfc*100,1):'0.0'}%`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)}g · ${gramsPfc?fmt(today.f/gramsPfc*100,1):'0.0'}%`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)}g · ${gramsPfc?fmt(today.c/gramsPfc*100,1):'0.0'}%`:'—');
  setText('pDiff',today.recorded?diffLabel(today.p,g.p,'g'):'—');setText('fDiff',today.recorded?diffLabel(today.f,g.f,'g'):'—');setText('cDiff',today.recorded?diffLabel(today.c,g.c,'g'):'—');
  setText('todayNote',today.recorded?`食事記録 ${today.entries} 件`:'今日はまだ記録がありません（0として扱いません）。');
