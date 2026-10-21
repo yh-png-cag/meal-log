@@ -2,27 +2,31 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f7f5">
 <title>食事とトレーニング</title>
-<style>
-:root{color-scheme:light;--ink:#202522;--muted:#737b75;--line:#e3e8e3;--bg:#f5f7f5;--green:#2f6b4f;--soft:#e9f2ec}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}main{max-width:680px;margin:auto;padding:28px 18px}h1{font-size:25px;margin:0 0 8px}p{color:var(--muted);line-height:1.8}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px}.pill{display:inline-block;background:var(--soft);color:var(--green);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700}code{overflow-wrap:anywhere}li{margin:9px 0}
-</style>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body><main>
-<span class="pill">PERSONAL DASHBOARD</span>
-<h1>食事とトレーニング</h1>
-<p>食事・PFC・水分と、トレーニング履歴をまとめる個人用ダッシュボードです。</p>
-<section class="card">
-<h2>初期設定が必要です</h2>
-<p>このサイトの画面はGitHub Pagesで公開できますが、個人の記録を安全に表示するには、Google OAuthの設定が必要です。認証設定が完了するまでは、スプレッドシートの内容を取得・表示しません。</p>
-<ol>
-<li>Google CloudでOAuth 2.0のウェブクライアントを作成する</li>
-<li>公開サイトのURLを「承認済みのJavaScript生成元」に登録する</li>
-<li>OAuthクライアントIDをフロントエンド設定に追加する</li>
-<li>Google Sheets APIを有効にし、本人のGoogleアカウントで認証する</li>
-</ol>
-<p>データ元は個人用スプレッドシートです。シートやGASを一般公開する必要はありません。</p>
+<header><div><h1>食事とトレーニング</h1><div class="status" id="statusText">Googleアカウント未接続</div></div><button class="btn" id="connectBtn">Googleに接続</button></header>
+<div id="configNotice" class="notice hidden">初期設定が必要です。READMEのGoogle OAuth設定を完了すると、個人のスプレッドシートを読み込めます。</div><div id="errorBox" class="error hidden"></div>
+<section id="mealView">
+<div class="tabs"><button class="active" data-period="today">今日</button><button data-period="7">7日間</button><button data-period="30">30日間</button></div>
+<div class="card"><div class="row"><div><div class="muted" id="periodLabel">今日の摂取カロリー</div><div class="metric"><span id="kcalNow">—</span><span class="unit"> kcal</span></div></div><div style="text-align:right"><div class="muted">目標</div><strong><span id="kcalGoalLabel">1,750</span> kcal</strong></div></div><div class="progress"><span id="kcalProgress" style="width:0%"></span></div><div class="row muted"><span id="kcalRemain">Googleに接続してください</span><button class="btn" id="settingsToggle">目標設定</button></div></div>
+<div class="card"><div class="row"><h2>PFCバランス</h2><span class="muted" id="pfcRatio">P 30% · F 30% · C 40%</span></div><div class="pfc">
+<div class="macro"><small>たんぱく質 P</small><strong><span id="pNow">—</span> g</strong><small>目標 <span id="pGoal">131</span>g</small><div class="mini"><span id="pProgress" class="p" style="width:0%"></span></div></div>
+<div class="macro"><small>脂質 F</small><strong><span id="fNow">—</span> g</strong><small>目標 <span id="fGoal">58</span>g</small><div class="mini"><span id="fProgress" class="f" style="width:0%"></span></div></div>
+<div class="macro"><small>炭水化物 C</small><strong><span id="cNow">—</span> g</strong><small>目標 <span id="cGoal">175</span>g</small><div class="mini"><span id="cProgress" class="c" style="width:0%"></span></div></div></div><small>目標比率からP=4、F=9、C=4 kcal/gで自動計算</small></div>
+<div class="card"><div class="row"><h2>水分</h2><small id="waterGoalLabel">目標 1,800 mL</small></div><div class="row"><div class="metric"><span id="waterNow">—</span><span class="unit"> mL</span></div><div style="flex:1"><div class="progress"><span id="waterProgress" style="width:0%"></span></div><small id="waterHint"></small></div></div></div>
+<div class="card"><div class="row"><h2 id="trendTitle">直近7日間のPFC</h2><small>記録日のみ</small></div><div id="trendChart" class="chart"></div><small>棒グラフはPFCの構成、数値はkcal</small></div>
+<div class="card"><h2>食事記録</h2><div id="mealList" class="empty">Googleに接続すると記録が表示されます。</div></div>
+<div class="card hidden" id="settingsCard"><h2>目標設定</h2><div class="settings">
+<div class="field"><label for="goalKcal">目標カロリー (kcal)</label><input id="goalKcal" type="number" min="500" max="6000" step="50"></div><div class="field"><label for="goalWater">水分目標 (mL)</label><input id="goalWater" type="number" min="0" max="6000" step="100"></div>
+<div class="field"><label for="ratioP">P 比率 (%)</label><input id="ratioP" type="number" min="0" max="100"></div><div class="field"><label for="ratioF">F 比率 (%)</label><input id="ratioF" type="number" min="0" max="100"></div><div class="field"><label for="ratioC">C 比率 (%)</label><input id="ratioC" type="number" min="0" max="100"></div><div class="field"><label>比率合計</label><strong id="ratioSum">100%</strong></div>
+</div><div class="row" style="margin-top:14px"><small>このブラウザーに保存</small><button class="btn primary" id="saveSettings">保存</button></div></div>
 </section>
-</main></body></html>
+<section id="workoutView" class="hidden"><div class="card"><div class="calendar-head"><button class="btn" id="prevMonth">‹</button><h2 id="monthTitle"></h2><button class="btn" id="nextMonth">›</button></div><div class="calendar" id="calendar"></div><small>● トレーニング記録あり</small></div><div class="card"><h2 id="workoutDateTitle">トレーニング記録</h2><div id="workoutList" class="empty">Googleに接続すると記録が表示されます。</div></div><div class="card hidden" id="exerciseDetail"><div class="row"><h2 id="exerciseTitle"></h2><button class="btn" id="closeExercise">戻る</button></div><div id="exerciseHistory"></div></div></section>
+</main><nav class="bottom"><button class="active" data-view="meal">食事</button><button data-view="workout">トレーニング</button></nav>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>
