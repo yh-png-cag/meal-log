@@ -15,7 +15,9 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
 .panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0}
 .eyebrow{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.07em}
 .hero{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:5px 0 12px}.big{font-size:34px;font-weight:750;letter-spacing:-.04em}.goal{font-size:12px;color:var(--muted);text-align:right}
-.track{height:7px;border-radius:9px;background:#edf0ed;overflow:hidden}.fill{height:100%;background:var(--green);border-radius:9px}
+.track{height:9px;border-radius:9px;background:#edf0ed;overflow:hidden}.fill{height:100%;background:var(--green);border-radius:9px}
+.kcal-track{height:10px}.kcal-fill{display:flex;background:transparent;border-radius:0;overflow:hidden;max-width:100%;transition:width .2s ease}.kcal-fill span{height:100%;min-width:0}.kcal-fill span:first-child{border-radius:9px 0 0 9px}
+.meal-summary{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.meal-summary-title{font-size:12px;font-weight:750;margin-bottom:7px}.meal-summary-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:5px 0;font-size:12px}.meal-summary-name{font-weight:700}.meal-summary-values{color:var(--muted);font-variant-numeric:tabular-nums}.meal-summary-values b{color:var(--ink);font-weight:650}
 .pfc-scale{position:relative;margin-top:16px}.pfc-stack{display:flex;height:16px;overflow:hidden;border-radius:5px;background:#edf0ed}.pfc-seg{height:100%;min-width:0}.pfc-p{background:var(--p)}.pfc-f{background:var(--f)}.pfc-c{background:var(--c)}
 .pfc-scale-label{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin-top:4px}.pfc-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
 .pfc-key{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);white-space:nowrap}.pfc-dot{width:8px;height:8px;border-radius:3px;flex:none}.pfc-key b{color:var(--ink);font-weight:650;margin-left:auto;font-size:11px}
@@ -23,7 +25,7 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
 .sectionhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
 .pill{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;color:var(--ink);font:inherit;font-size:13px}
 .range-switch{display:flex;gap:6px}.range-switch button,.month-nav button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font:inherit;font-size:12px;color:var(--muted)}.range-switch button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-.day-list{display:grid;gap:11px}.day-row{display:grid;grid-template-columns:42px minmax(0,1fr) 67px;gap:8px;align-items:center;font-size:12px}.day-date{color:var(--muted)}.trend-pfc{height:10px;display:flex;overflow:hidden;border-radius:4px;background:#edf0ed}.trend-pfc span{height:100%;min-width:0}.day-row.missing{opacity:.55}.day-row.missing .trend-pfc{background:repeating-linear-gradient(135deg,#e4e8e4,#e4e8e4 4px,#fff 4px,#fff 8px)}.trend-legend{font-size:10px;color:var(--muted);margin:3px 0 0 50px}
+.day-list{display:grid;gap:11px}.day-row{display:grid;grid-template-columns:42px minmax(0,1fr) 67px;gap:8px;align-items:center;font-size:12px}.day-date{color:var(--muted)}.trend-pfc{height:10px;display:flex;overflow:hidden;border-radius:4px;background:#edf0ed}.trend-pfc .trend-pfc-fill{height:100%;display:flex;overflow:hidden;min-width:0;max-width:100%}.trend-pfc .trend-pfc-fill span{height:100%;min-width:0}.day-row.missing{opacity:.55}.day-row.missing .trend-pfc{background:repeating-linear-gradient(135deg,#e4e8e4,#e4e8e4 4px,#fff 4px,#fff 8px)}.trend-legend{font-size:10px;color:var(--muted);margin:3px 0 0 50px}
 .settings-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 9px;font:inherit;font-size:12px;color:var(--green)}.settings-panel{background:var(--bg);border-radius:12px;padding:12px;margin-bottom:12px}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings-grid label{font-size:12px;color:var(--muted)}.settings-grid input{width:100%;margin-top:4px;padding:9px;border:1px solid var(--line);border-radius:8px;background:white;font:inherit;color:var(--ink)}.settings-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.settings-actions button{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:white;font:inherit}.settings-actions .save{background:var(--green);color:white;border-color:var(--green)}
 .summary{font-size:12px;margin:12px 0 0}.notice{padding:12px;background:var(--bg);border-radius:10px;color:var(--muted);font-size:13px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
@@ -53,7 +55,7 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
       <label>炭水化物 C（%）<input id="inputRatioC" type="number" min="0" max="100" step="1"></label>
     </div><div class="notice" style="margin-top:10px"><b>自動計算</b><div id="goalCalcPreview">P — g（— kcal） / F — g（— kcal） / C — g（— kcal）</div><small id="ratioSumNote">PFC比率の合計を100%にしてください。</small></div><div class="settings-actions"><button id="cancelSettings">キャンセル</button><button id="saveSettings" class="save">保存</button></div><small>設定はアプリ側に保存され、更新後も引き継がれます。</small></div>
     <div class="hero"><div><span class="big" id="kcal">—</span> <span class="muted">kcal</span></div><div class="goal">目標 <b id="goalKcal">1,750</b> kcal<br><span id="kcalDiff">—</span></div></div>
-    <div class="track"><div id="kcalFill" class="fill" style="width:0%"></div></div>
+    <div class="track kcal-track" aria-label="目標カロリーに対する進捗。色分けはPFCのグラム比"><div id="kcalFill" class="fill kcal-fill" style="width:0%"><span id="kcalP" class="pfc-p"></span><span id="kcalF" class="pfc-f"></span><span id="kcalC" class="pfc-c"></span></div></div>
     <div class="pfc-scale"><div class="eyebrow" style="margin-bottom:6px">PFC摂取量の構成（グラム比）</div><div class="pfc-stack" aria-label="PFC摂取グラム数の構成比"><div id="pSeg" class="pfc-seg pfc-p"></div><div id="fSeg" class="pfc-seg pfc-f"></div><div id="cSeg" class="pfc-seg pfc-c"></div></div><div class="pfc-scale-label"><span id="pfcCurrent">PFC由来 — kcal</span><span id="pfcGoal">目標 — kcal</span></div></div>
     <div class="pfc-legend"><div class="pfc-key"><i class="pfc-dot pfc-p"></i>P <b id="pLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-f"></i>F <b id="fLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-c"></i>C <b id="cLegend">—</b></div></div>
     <div class="grid" style="margin-top:15px">
@@ -63,6 +65,10 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
     </div>
     <div class="sectionhead" style="margin-top:16px;margin-bottom:0"><h3>水分摂取量</h3><b id="water">—</b></div>
     <p id="todayNote" class="summary"></p>
+    <div class="meal-summary" aria-label="食事区分別の当日サマリー">
+      <div class="meal-summary-title">今日の食事サマリー</div>
+      <div id="mealSummaryRows"></div>
+    </div>
   </div>
   <div class="panel">
     <div class="sectionhead"><h2 id="trendTitle">直近7日間</h2><div class="range-switch"><button data-range="7" class="active">7日</button><button data-range="30">30日</button></div></div>
