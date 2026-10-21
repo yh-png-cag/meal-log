@@ -53,15 +53,15 @@ function renderMeal(){
  setText('goalKcal',fmt(g.kcal));setText('goalP',fmt(g.p));setText('goalF',fmt(g.f));setText('goalC',fmt(g.c));
  setText('kcal',today.recorded?fmt(today.kcal):'—');setText('p',today.recorded?fmt(today.p,1)+' g':'—');setText('f',today.recorded?fmt(today.f,1)+' g':'—');setText('c',today.recorded?fmt(today.c,1)+' g':'—');setText('water',today.recorded?fmt(today.water)+' mL':'—');
  setText('kcalDiff',today.recorded?diffLabel(today.kcal,g.kcal,'kcal'):'未記録');$('kcalFill').style.width=today.recorded?Math.min(100,today.kcal/g.kcal*100)+'%':'0%';
- const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,goalMacro=g.p*4+g.f*9+g.c*4;
- $('pSeg').style.width=Math.min(100,pk/goalMacro*100)+'%';$('fSeg').style.width=Math.min(100,fk/goalMacro*100)+'%';$('cSeg').style.width=Math.min(100,ck/goalMacro*100)+'%';
- setText('pfcCurrent',`PFC由来 ${today.recorded?fmt(macro):'—'} kcal`);setText('pfcGoal',`目標 ${fmt(goalMacro)} kcal`);
- setText('pLegend',today.recorded?`${fmt(today.p,1)} / ${fmt(g.p)}g`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)} / ${fmt(g.f)}g`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)} / ${fmt(g.c)}g`:'—');
+ const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,grams=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
+ $('pSeg').style.width=grams?Math.max(0,today.p)/grams*100+'%':'0%';$('fSeg').style.width=grams?Math.max(0,today.f)/grams*100+'%':'0%';$('cSeg').style.width=grams?Math.max(0,today.c)/grams*100+'%':'0%';
+ setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(grams,1):'—'} g`);setText('pfcGoal','各色の割合＝P・F・Cの摂取グラム比');
+ setText('pLegend',today.recorded?`${fmt(today.p,1)}g · ${grams?fmt(today.p/grams*100,1):'0.0'}%`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)}g · ${grams?fmt(today.f/grams*100,1):'0.0'}%`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)}g · ${grams?fmt(today.c/grams*100,1):'0.0'}%`:'—');
  setText('pDiff',today.recorded?diffLabel(today.p,g.p,'g'):'—');setText('fDiff',today.recorded?diffLabel(today.f,g.f,'g'):'—');setText('cDiff',today.recorded?diffLabel(today.c,g.c,'g'):'—');
  setText('todayNote',today.recorded?`食事記録 ${today.entries} 件`:'今日はまだ記録がありません（0として扱いません）。');
  renderTrend();
 }
-function diffLabel(actual,target,unit){const diff=actual-target;return diff>=0?`+${fmt(diff,1)} ${unit}`:`−${fmt(Math.abs(diff),1)} ${unit}`}
+function diffLabel(actual,target,unit){const diff=target-actual;if(Math.abs(diff)<0.05)return '目標達成';return diff>0?`あと ${fmt(diff,1)} ${unit}`:`${fmt(Math.abs(diff),1)} ${unit} 超過`}
 function renderTrend(){
  const n=Number(document.querySelector('[data-range].active').dataset.range),days=aggregateRange(appData.meals,n),recorded=days.filter(d=>d.recorded),max=Math.max(1,...recorded.map(d=>d.kcal));
   setText('trendTitle',`直近${n}日間`);const goalMacro=goals.p*4+goals.f*9+goals.c*4;
