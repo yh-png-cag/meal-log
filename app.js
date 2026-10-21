@@ -16,7 +16,7 @@ function loadGoals(){
  return goalsFromRatios(DEFAULT_GOALS.kcal,DEFAULT_GOALS.ratioP,DEFAULT_GOALS.ratioF,DEFAULT_GOALS.ratioC);
 }
 let goals=loadGoals();
-const mealHeaders={date:'日付',kcal:'カロリー(kcal)',p:'たんぱく質P(g)',f:'脂質F(g)',c:'炭水化物C(g)',water:'水分量(mL)',food:'食品・メニュー'};
+const mealHeaders={date:'日付',mealType:'食事区分',kcal:'カロリー(kcal)',p:'たんぱく質P(g)',f:'脂質F(g)',c:'炭水化物C(g)',water:'水分量(mL)',food:'食品・メニュー'};
 const workoutHeaders={date:'日付',name:'種目',part:'部位',weight:'重量(kg)',reps:'回数',sets:'セット数',note:'メモ'};
 const fmt=(v,d=0)=>Number(v||0).toLocaleString('ja-JP',{maximumFractionDigits:d,minimumFractionDigits:d});
 function num(v){if(v===''||v===null||v===undefined)return 0;const n=Number(String(v).replace(/,/g,''));return Number.isFinite(n)?n:0}
@@ -29,6 +29,7 @@ function parseRows(rows,kind){
  return (rows||[]).map(r=>({
   raw:r,date:dateKey(r[kind==='meal'?mealHeaders.date:workoutHeaders.date]),
   name:String(r[kind==='meal'?mealHeaders.food:workoutHeaders.name]||'').trim(),
+  mealType:kind==='meal'?String(r[mealHeaders.mealType]||'').trim():'',
   part:String(r[workoutHeaders.part]||'').trim(),
   kcal:num(r[mealHeaders.kcal]),p:num(r[mealHeaders.p]),f:num(r[mealHeaders.f]),c:num(r[mealHeaders.c]),water:num(r[mealHeaders.water]),
   weight:r[workoutHeaders.weight]===''||r[workoutHeaders.weight]===null||r[workoutHeaders.weight]===undefined?'':num(r[workoutHeaders.weight]),
@@ -48,24 +49,45 @@ function displayDate(key,withWeek=true){const d=new Date(key+'T12:00:00');return
 function aggregateRange(rows,n){const days=[];for(let i=n-1;i>=0;i--)days.push(dayAggregate(rows,dateOffset(-i)));return days}
 function sumAvg(days,key){const recorded=days.filter(d=>d.recorded);return {days:recorded.length,value:recorded.length?recorded.reduce((s,d)=>s+d[key],0)/recorded.length:null}}
 function setText(id,v){$(id).textContent=v}
+function renderMealSummary(rows,date){
+ const todays=rows.filter(r=>r.date===date);
+ const groups=[
+  {label:'朝',match:/朝|朝食|breakfast/i},
+  {label:'昼',match:/昼|昼食|ランチ|lunch/i},
+  {label:'夜',match:/夜|晩|夕食|夕飯|dinner/i},
+  {label:'間食',match:/間食|おやつ|snack/i}
+ ];
+ const sums=groups.map(g=>{const list=todays.filter(r=>g.match.test(r.mealType));return {label:g.label,kcal:list.reduce((s,r)=>s+r.kcal,0),p:list.reduce((s,r)=>s+r.p,0),f:list.reduce((s,r)=>s+r.f,0),c:list.reduce((s,r)=>s+r.c,0)}});
+ const known=new Set(todays.filter(r=>groups.some(g=>g.match.test(r.mealType))));
+ const others=todays.filter(r=>!groups.some(g=>g.match.test(r.mealType)));
+ if(others.length)sums.push({label:'その他',kcal:others.reduce((s,r)=>s+r.kcal,0),p:others.reduce((s,r)=>s+r.p,0),f:others.reduce((s,r)=>s+r.f,0),c:others.reduce((s,r)=>s+r.c,0)});
+ $('mealSummaryRows').innerHTML=sums.map(g=>`<div class="meal-summary-row"><span class="meal-summary-name">${g.label}</span><span class="meal-summary-values"><b>${fmt(g.kcal)} kcal</b>（P${fmt(g.p,1)} F${fmt(g.f,1)} C${fmt(g.c,1)} g）</span></div>`).join('');
+}
 function renderMeal(){
  const rows=appData.meals,today=dayAggregate(rows,dateOffset(0)),g=goals;
  setText('goalKcal',fmt(g.kcal));setText('goalP',fmt(g.p));setText('goalF',fmt(g.f));setText('goalC',fmt(g.c));
  setText('kcal',today.recorded?fmt(today.kcal):'—');setText('p',today.recorded?fmt(today.p,1)+' g':'—');setText('f',today.recorded?fmt(today.f,1)+' g':'—');setText('c',today.recorded?fmt(today.c,1)+' g':'—');setText('water',today.recorded?fmt(today.water)+' mL':'—');
- setText('kcalDiff',today.recorded?diffLabel(today.kcal,g.kcal,'kcal'):'未記録');$('kcalFill').style.width=today.recorded?Math.min(100,today.kcal/g.kcal*100)+'%':'0%';
- const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,grams=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
- $('pSeg').style.width=grams?Math.max(0,today.p)/grams*100+'%':'0%';$('fSeg').style.width=grams?Math.max(0,today.f)/grams*100+'%':'0%';$('cSeg').style.width=grams?Math.max(0,today.c)/grams*100+'%':'0%';
- setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(grams,1):'—'} g`);setText('pfcGoal','各色の割合＝P・F・Cの摂取グラム比');
- setText('pLegend',today.recorded?`${fmt(today.p,1)}g · ${grams?fmt(today.p/grams*100,1):'0.0'}%`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)}g · ${grams?fmt(today.f/grams*100,1):'0.0'}%`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)}g · ${grams?fmt(today.c/grams*100,1):'0.0'}%`:'—');
+ setText('kcalDiff',today.recorded?diffLabel(today.kcal,g.kcal,'kcal'):'未記録');
+ const kcalProgress=today.recorded?Math.min(100,Math.max(0,today.kcal/g.kcal*100)):0;
+ $('kcalFill').style.width=kcalProgress+'%';
+ const grams=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
+ $('kcalP').style.width=grams?Math.max(0,today.p)/grams*100+'%':'0%';
+ $('kcalF').style.width=grams?Math.max(0,today.f)/grams*100+'%':'0%';
+ $('kcalC').style.width=grams?Math.max(0,today.c)/grams*100+'%':'0%';
+ const pk=today.p*4,fk=today.f*9,ck=today.c*4,macro=pk+fk+ck,gramsPfc=Math.max(0,today.p)+Math.max(0,today.f)+Math.max(0,today.c);
+ $('pSeg').style.width=gramsPfc?Math.max(0,today.p)/gramsPfc*100+'%':'0%';$('fSeg').style.width=gramsPfc?Math.max(0,today.f)/gramsPfc*100+'%':'0%';$('cSeg').style.width=gramsPfc?Math.max(0,today.c)/gramsPfc*100+'%':'0%';
+ setText('pfcCurrent',`PFC合計 ${today.recorded?fmt(gramsPfc,1):'—'} g`);setText('pfcGoal','各色の割合＝P・F・Cの摂取グラム比');
+ setText('pLegend',today.recorded?`${fmt(today.p,1)}g · ${gramsPfc?fmt(today.p/gramsPfc*100,1):'0.0'}%`:'—');setText('fLegend',today.recorded?`${fmt(today.f,1)}g · ${gramsPfc?fmt(today.f/gramsPfc*100,1):'0.0'}%`:'—');setText('cLegend',today.recorded?`${fmt(today.c,1)}g · ${gramsPfc?fmt(today.c/gramsPfc*100,1):'0.0'}%`:'—');
  setText('pDiff',today.recorded?diffLabel(today.p,g.p,'g'):'—');setText('fDiff',today.recorded?diffLabel(today.f,g.f,'g'):'—');setText('cDiff',today.recorded?diffLabel(today.c,g.c,'g'):'—');
  setText('todayNote',today.recorded?`食事記録 ${today.entries} 件`:'今日はまだ記録がありません（0として扱いません）。');
+ renderMealSummary(rows,dateOffset(0));
  renderTrend();
 }
 function diffLabel(actual,target,unit){const diff=target-actual;if(Math.abs(diff)<0.05)return '目標達成';return diff>0?`あと ${fmt(diff,1)} ${unit}`:`${fmt(Math.abs(diff),1)} ${unit} 超過`}
 function renderTrend(){
- const n=Number(document.querySelector('[data-range].active').dataset.range),days=aggregateRange(appData.meals,n),recorded=days.filter(d=>d.recorded),max=Math.max(1,...recorded.map(d=>d.kcal));
+ const n=Number(document.querySelector('[data-range].active').dataset.range),days=aggregateRange(appData.meals,n),recorded=days.filter(d=>d.recorded);
   setText('trendTitle',`直近${n}日間`);const goalMacro=goals.p*4+goals.f*9+goals.c*4;
-  $('trendList').innerHTML=days.map(d=>{const pk=d.p*4,fk=d.f*9,ck=d.c*4;return `<div class="day-row ${d.recorded?'':'missing'}"><span class="day-date">${displayDate(d.date,false)}</span><div class="trend-pfc" title="P ${fmt(d.p,1)}g / F ${fmt(d.f,1)}g / C ${fmt(d.c,1)}g"><span style="width:${d.recorded?Math.min(100,pk/goalMacro*100):0}%;background:var(--p)"></span><span style="width:${d.recorded?Math.min(100,fk/goalMacro*100):0}%;background:var(--f)"></span><span style="width:${d.recorded?Math.min(100,ck/goalMacro*100):0}%;background:var(--c)"></span></div><span style="text-align:right">${d.recorded?fmt(d.kcal)+' kcal':'未記録'}</span></div>${d.recorded?`<div class="trend-legend">P ${fmt(d.p,0)}g · F ${fmt(d.f,0)}g · C ${fmt(d.c,0)}g</div>`:''}`}).join('');
+  $('trendList').innerHTML=days.map(d=>{const grams=Math.max(0,d.p)+Math.max(0,d.f)+Math.max(0,d.c),progress=d.recorded?Math.min(100,Math.max(0,d.kcal/goals.kcal*100)):0;const pp=grams?Math.max(0,d.p)/grams*100:0,fp=grams?Math.max(0,d.f)/grams*100:0,cp=grams?Math.max(0,d.c)/grams*100:0;return `<div class="day-row ${d.recorded?'':'missing'}"><span class="day-date">${displayDate(d.date,false)}</span><div class="trend-pfc" title="カロリー進捗 ${fmt(d.kcal)} / ${fmt(goals.kcal)} kcal。内訳 P ${fmt(d.p,1)}g / F ${fmt(d.f,1)}g / C ${fmt(d.c,1)}g"><div class="trend-pfc-fill" style="width:${progress}%"><span style="width:${pp}%;background:var(--p)"></span><span style="width:${fp}%;background:var(--f)"></span><span style="width:${cp}%;background:var(--c)"></span></div></div><span style="text-align:right">${d.recorded?fmt(d.kcal)+' kcal':'未記録'}</span></div>${d.recorded?`<div class="trend-legend">P ${fmt(d.p,0)}g · F ${fmt(d.f,0)}g · C ${fmt(d.c,0)}g</div>`:''}`}).join('');
  setText('trendNote',`記録日 ${recorded.length} / ${n} 日。未記録日は平均から除外。`);
  const ak=sumAvg(days,'kcal'),ap=sumAvg(days,'p'),aw=sumAvg(days,'water');setText('avgKcal',ak.days?fmt(ak.value):'—');setText('avgP',ap.days?fmt(ap.value,1)+' g':'—');setText('avgWater',aw.days?fmt(aw.value)+' mL':'—');
 }
