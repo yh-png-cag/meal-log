@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7f5">
+<title>食事とトレーニング</title>
+<style>
+:root{color-scheme:light;--ink:#202522;--muted:#737b75;--line:#e3e8e3;--bg:#f5f7f5;--green:#2f6b4f;--soft:#e9f2ec}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}main{max-width:680px;margin:auto;padding:28px 18px}h1{font-size:25px;margin:0 0 8px}p{color:var(--muted);line-height:1.8}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px}.pill{display:inline-block;background:var(--soft);color:var(--green);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700}code{overflow-wrap:anywhere}li{margin:9px 0}
+</style>
+</head>
+<body><main>
+<span class="pill">PERSONAL DASHBOARD</span>
+<h1>食事とトレーニング</h1>
+<p>食事・PFC・水分と、トレーニング履歴をまとめる個人用ダッシュボードです。</p>
+<section class="card">
+<h2>初期設定が必要です</h2>
+<p>このサイトの画面はGitHub Pagesで公開できますが、個人の記録を安全に表示するには、Google OAuthの設定が必要です。認証設定が完了するまでは、スプレッドシートの内容を取得・表示しません。</p>
+<ol>
+<li>Google CloudでOAuth 2.0のウェブクライアントを作成する</li>
+<li>公開サイトのURLを「承認済みのJavaScript生成元」に登録する</li>
+<li>OAuthクライアントIDをフロントエンド設定に追加する</li>
+<li>Google Sheets APIを有効にし、本人のGoogleアカウントで認証する</li>
+</ol>
+<p>データ元は個人用スプレッドシートです。シートやGASを一般公開する必要はありません。</p>
+</section>
+</main></body></html>
