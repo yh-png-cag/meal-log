@@ -107,28 +107,29 @@ function renderWorkoutList(){
    $('workoutCalendar').querySelectorAll('[data-date]').forEach(btn=>btn.classList.toggle('selected',btn.dataset.date===selectedWorkoutDate));
  }
  const dayRows=rows.filter(r=>r.date===selectedWorkoutDate).sort((a,b)=>a.name.localeCompare(b.name));
- const groupedDay=groupByExerciseWeight(dayRows);
- setText('selectedDateLabel',displayDate(selectedWorkoutDate));setText('selectedDayCount',groupedDay.length?`${new Set(dayRows.map(r=>r.name)).size}種目・${groupedDay.length}行`:'');
+ const groupedDay=groupByExercise(dayRows);
+ setText('selectedDateLabel',displayDate(selectedWorkoutDate));setText('selectedDayCount',groupedDay.length?`${groupedDay.length}種目・${dayRows.length}記録`:'');
  $('workoutEmpty').classList.toggle('hidden',groupedDay.length>0);
- $('workoutList').innerHTML=groupedDay.map(g=>`<button class="exercise" data-exercise="${escapeAttr(g.name)}"><span><span class="exercise-name">${escapeHtml(g.name||'名称未入力')}</span><div class="exercise-meta">${g.weightLabel} ・ ${g.records.map(formatWorkoutEntry).join(' ／ ')}</div></span><span class="chevron">›</span></button>`).join('');
+ $('workoutList').innerHTML=groupedDay.map(g=>`<button class="exercise" data-exercise="${escapeAttr(g.name)}"><span><span class="exercise-name">${escapeHtml(g.name||'名称未入力')}</span>${g.weights.map(w=>`<div class="exercise-meta">${w.weightLabel}：${w.records.map(formatWorkoutEntry).join(' ／ ')}</div>`).join('')}</span><span class="chevron">›</span></button>`).join('');
  $('workoutList').querySelectorAll('[data-exercise]').forEach(btn=>btn.addEventListener('click',()=>openDetail(btn.dataset.exercise)));
  $('nextMonth').disabled=key>=monthKey(new Date());
 }
 function openDetail(name){
  selectedExercise=name;const rows=appData.workouts.filter(r=>r.name===name).sort((a,b)=>b.date.localeCompare(a.date));
  if(!rows.length)return;setScreen('detail');setText('detailName',name);setText('detailPart',rows.find(r=>r.part)?.part||'種目詳細');
- const groups=groupByExerciseWeight(rows);
- $('historyList').innerHTML=groups.map(g=>`<div class="weight-history-group"><div class="weight-history-title">${g.weightLabel}</div>${g.records.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<div class="history-row"><div class="history-date">${displayDate(r.date,false)}</div><div class="history-main">${formatWorkoutEntry(r)}${r.note?`<div class="history-note">${escapeHtml(r.note)}</div>`:''}</div></div>`).join('')}</div>`).join('');
+ const dates=groupByDate(rows);
+ $('historyList').innerHTML=dates.map(day=>`<div class="weight-history-group"><div class="weight-history-title">${displayDate(day.date,false)}</div>${day.weights.map(w=>`<div class="history-weight-group"><div class="history-weight-title">${w.weightLabel}</div>${w.records.map(r=>`<div class="history-row"><div class="history-main">${formatWorkoutEntry(r)}${r.note?`<div class="history-note">${escapeHtml(r.note)}</div>`:''}</div></div>`).join('')}</div>`).join('')}</div>`).join('');
 }
 function weightLabel(r){return r.weight!==''?`${fmt(r.weight,1)} kg`:'自重・重量記録なし'}
-function groupByExerciseWeight(rows){
+function groupByExercise(rows){
  const map=new Map();
- rows.forEach(r=>{
-  const key=`${r.name}__${r.weight===''?'bodyweight':r.weight}`;
-  if(!map.has(key))map.set(key,{name:r.name,weight:r.weight,weightLabel:weightLabel(r),records:[]});
-  map.get(key).records.push(r);
- });
- return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name)||((a.weight===''?-Infinity:a.weight)-(b.weight===''?-Infinity:b.weight)));
+ rows.forEach(r=>{if(!map.has(r.name))map.set(r.name,{name:r.name,weights:[]});const item=map.get(r.name);const key=r.weight===''?'bodyweight':String(r.weight);let w=item.weights.find(x=>x.key===key);if(!w){w={key,weightLabel:weightLabel(r),records:[]};item.weights.push(w)}w.records.push(r)});
+ return [...map.values()].map(g=>({...g,weights:g.weights.sort((a,b)=>{const av=a.key==='bodyweight'?-Infinity:Number(a.key),bv=b.key==='bodyweight'?-Infinity:Number(b.key);return av-bv})}));
+}
+function groupByDate(rows){
+ const map=new Map();
+ rows.forEach(r=>{if(!map.has(r.date))map.set(r.date,{date:r.date,weights:[]});const day=map.get(r.date);const key=r.weight===''?'bodyweight':String(r.weight);let w=day.weights.find(x=>x.key===key);if(!w){w={key,weightLabel:weightLabel(r),records:[]};day.weights.push(w)}w.records.push(r)});
+ return [...map.values()].sort((a,b)=>b.date.localeCompare(a.date)).map(day=>({...day,weights:day.weights.sort((a,b)=>{const av=a.key==='bodyweight'?-Infinity:Number(a.key),bv=b.key==='bodyweight'?-Infinity:Number(b.key);return av-bv})}));
 }
 function formatWorkoutEntry(r){
  const reps=r.reps!==''?`${fmt(r.reps)}回`:'回数未記録';
