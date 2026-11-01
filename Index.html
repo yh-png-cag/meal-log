@@ -13,7 +13,8 @@ main{max-width:760px;margin:auto;padding:22px 16px 44px}header{display:flex;just
 </style></head><body><main>
 <header><div><h1>食事ログ</h1><small id="stamp">読み込み中…</small></div><span class="badge">READ ONLY</span></header>
 <div id="error" class="error hidden"></div>
-<nav class="topnav"><button id="mealNav" class="active">食事</button><button id="workoutNav">筋トレ</button></nav>\n<nav class="tabs" id="mealTabs"><button class="active" data-tab="today">今日</button><button data-tab="week">7日間</button><button data-tab="month">30日間</button></nav>
+<nav class="topnav"><button id="mealNav" class="active">食事</button><button id="workoutNav">筋トレ</button></nav>
+<nav class="tabs" id="mealTabs"><button class="active" data-tab="today">今日</button><button data-tab="week">7日間</button><button data-tab="month">30日間</button></nav>
 <section id="today">
 <div class="panel"><div class="eyebrow">TODAY'S INTAKE</div><div class="hero"><div><span class="big" id="kcal">—</span> <span class="muted">kcal</span></div><div class="goal">目標 <span id="goalKcal">1,750</span> kcal</div></div><div class="track"><div id="kcalFill" class="fill" style="width:0%"></div></div><div class="pfc-scale"><div class="pfc-stack" aria-label="PFC目標カロリーを最大目盛りとした摂取量"><div id="pSeg" class="pfc-seg pfc-p" style="width:0%"></div><div id="fSeg" class="pfc-seg pfc-f" style="width:0%"></div><div id="cSeg" class="pfc-seg pfc-c" style="width:0%"></div></div><div class="pfc-goalmark"></div><div class="pfc-scale-label"><span id="pfcCurrent">摂取 0 kcal</span><span id="pfcGoal">目標 1,720 kcal</span></div></div><div class="pfc-legend"><div class="pfc-key"><i class="pfc-dot pfc-p"></i>P <b id="pLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-f"></i>F <b id="fLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-c"></i>C <b id="cLegend">—</b></div></div><p class="summary" style="margin-top:6px">色付き部分が摂取量、右端の目盛りがPFC目標量</p><div class="grid" style="margin-top:16px">
 <div class="metric"><span>たんぱく質 P</span><b id="p">—</b><span>目標 <span id="goalP">75</span> g</span></div><div class="metric"><span>脂質 F</span><b id="f">—</b><span>目標 <span id="goalF">60</span> g</span></div><div class="metric"><span>炭水化物 C</span><b id="c">—</b><span>目標 <span id="goalC">220</span> g</span></div></div><p id="todayNote" class="summary"></p></div>
@@ -45,7 +46,10 @@ main{max-width:760px;margin:auto;padding:22px 16px 44px}header{display:flex;just
   </div>
 </section>
 </main><script>
-let data=null;\nlet workoutRows=[];\nlet calendarMonth=new Date(); calendarMonth.setDate(1);\nlet selectedWorkoutDate='';
+let data=null;
+let workoutRows=[];
+let calendarMonth=new Date(); calendarMonth.setDate(1);
+let selectedWorkoutDate='';
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>Number(n||0).toLocaleString('ja-JP',{maximumFractionDigits:d,minimumFractionDigits:d});
 function goals(){return {kcal:+$('setKcal').value||1750,p:+$('setP').value||75,f:+$('setF').value||60,c:+$('setC').value||220}}
@@ -70,9 +74,6 @@ function drawList(id,days){const max=Math.max(1,...days.filter(d=>d.recorded).ma
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['today','week','month'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))}));
 $('saveGoals').addEventListener('click',saveGoals);loadGoals();
 
-let workoutRows=[];
-let calendarMonth=new Date(); calendarMonth.setDate(1);
-let selectedWorkoutDate='';
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const dateLabel=s=>{const [y,m,d]=s.split('-').map(Number);return y+'年'+m+'月'+d+'日'};
 const weightLabel=v=>v==null?'—':fmt(v, v%1?1:0)+'kg';
