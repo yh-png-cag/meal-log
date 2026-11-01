@@ -128,5 +128,5 @@ $('workoutNav').addEventListener('click',()=>{$('workoutNav').classList.add('act
 $('prevMonth').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()-1);renderCalendar()});
 $('nextMonth').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()+1);renderCalendar()});
 $('backToWorkout').addEventListener('click',()=>{$('workoutDetailView').classList.add('hidden');$('workoutCalendarView').classList.remove('hidden')});
-\ngoogle.script.run.withSuccessHandler(d=>{data=d;$('stamp').textContent='更新 '+d.updatedAt;render()}).withFailureHandler(e=>{$('error').textContent='データを読み込めませんでした: '+(e&&e.message?e.message:String(e));$('error').classList.remove('hidden');$('stamp').textContent='読み込み失敗'}).getDashboardData();
+google.script.run.withSuccessHandler(d=>{data=d;$('stamp').textContent='更新 '+d.updatedAt;render()}).withFailureHandler(e=>{$('error').textContent='データを読み込めませんでした: '+(e&&e.message?e.message:String(e));$('error').classList.remove('hidden');$('stamp').textContent='読み込み失敗'}).getDashboardData();
 </script></body></html>
