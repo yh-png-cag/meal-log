@@ -89,7 +89,7 @@ function getWorkoutData() {
     if (rawDate instanceof Date) date = Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd');
     else {
       const s = String(rawDate).trim();
-      const m = s.match(/^(\\d{4})[\\/-](\\d{1,2})[\\/-](\\d{1,2})/);
+      const m = s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
       if (!m) return out;
       date = m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
     }
