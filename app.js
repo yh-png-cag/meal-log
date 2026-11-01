@@ -118,7 +118,10 @@ function openDetail(name){
  selectedExercise=name;const rows=appData.workouts.filter(r=>r.name===name).sort((a,b)=>b.date.localeCompare(a.date));
  if(!rows.length)return;setScreen('detail');setText('detailName',name);setText('detailPart',rows.find(r=>r.part)?.part||'種目詳細');
  const dates=groupByDate(rows);
- $('historyList').innerHTML=dates.map(day=>`<div class="weight-history-group"><div class="weight-history-title">${displayDate(day.date,false)}</div>${day.weights.map(w=>`<div class="history-weight-group"><div class="history-weight-title">${w.weightLabel}</div>${w.records.map(r=>`<div class="history-row"><div class="history-main">${formatWorkoutEntry(r)}${r.note?`<div class="history-note">${escapeHtml(r.note)}</div>`:''}</div></div>`).join('')}</div>`).join('')}</div>`).join('');
+ $('historyList').innerHTML=`<table class="history-table"><thead><tr><th>日付</th><th>重量</th><th>回数</th><th>セット数</th></tr></thead><tbody>${dates.map(day=>{
+  const records=day.weights.flatMap(w=>w.records.map(r=>({weight:r.weight,reps:r.reps,sets:r.sets,note:r.note})));
+  return records.map((r,index)=>`<tr><td class="history-date">${index===0?displayDate(day.date,false):''}</td><td>${r.weight===''?'自重':fmt(r.weight,Number.isInteger(r.weight)?0:1)+'kg'}</td><td>${r.reps!==''?fmt(r.reps)+'回':'—'}</td><td>${r.sets!==''?fmt(r.sets):'—'}</td></tr>${r.note?`<tr class="history-note-row"><td></td><td colspan="3">${escapeHtml(r.note)}</td></tr>`:''}`).join('');
+ }).join('')}</tbody></table>`;
 }
 function weightLabel(r){return r.weight!==''?`${fmt(r.weight,1)} kg`:'自重・重量記録なし'}
 function groupByExercise(rows){
