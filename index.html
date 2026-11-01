@@ -36,7 +36,7 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
 .stat-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:var(--bg);border-radius:12px;padding:13px}.stat .value{font-size:22px;font-weight:750;display:block}.stat .label{font-size:11px;color:var(--muted)}
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:8px}.compare .metric{padding:12px}.delta{font-size:12px;margin-top:4px;font-weight:650}.positive{color:var(--green)}.negative{color:var(--red)}
 .chart-wrap{height:220px;position:relative;width:100%;margin-top:8px}canvas{width:100%;height:100%}
-.history-row{display:grid;grid-template-columns:66px minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line)}.history-date{font-size:12px;color:var(--muted)}.history-main{font-size:13px}.history-note{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.weight-history-group{padding:10px 0;border-top:1px solid var(--line)}.weight-history-title{font-size:14px;font-weight:750;color:var(--green);margin-bottom:2px}.history-row{display:grid;grid-template-columns:66px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line)}.history-date{font-size:12px;color:var(--muted)}.history-main{font-size:13px}.history-note{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
 @media(min-width:600px){main{padding-top:28px}.panel{padding:20px}.big{font-size:40px}}
 </style>
 </head>
@@ -97,8 +97,7 @@ small,.muted,.summary{color:var(--muted)}small{font-size:12px}
   <div class="panel">
     <div class="eyebrow" id="detailPart">種目詳細</div><h2 id="detailName" style="font-size:22px;margin-top:4px">—</h2>
   </div>
-  <div class="panel" id="chartPanel"><div class="sectionhead"><h2>重量の推移</h2><small>日付順</small></div><div class="chart-wrap"><canvas id="progressChart"></canvas></div><p id="chartNote" class="summary"></p></div>
-  <div class="panel"><h2>過去の記録</h2><div id="historyList"></div></div>
+  <div class="panel"><h2>過去の記録（重量別）</h2><div id="historyList"></div></div>
 </section>
 </main>
 <nav class="bottom-nav"><button id="navMeal" class="active">食事</button><button id="navWorkout">筋トレ</button></nav>
