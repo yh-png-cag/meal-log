@@ -107,30 +107,33 @@ function renderWorkoutList(){
    $('workoutCalendar').querySelectorAll('[data-date]').forEach(btn=>btn.classList.toggle('selected',btn.dataset.date===selectedWorkoutDate));
  }
  const dayRows=rows.filter(r=>r.date===selectedWorkoutDate).sort((a,b)=>a.name.localeCompare(b.name));
- setText('selectedDateLabel',displayDate(selectedWorkoutDate));setText('selectedDayCount',dayRows.length?`${dayRows.length}種目`:'');
- $('workoutEmpty').classList.toggle('hidden',dayRows.length>0);
- $('workoutList').innerHTML=dayRows.map(r=>`<button class="exercise" data-exercise="${escapeAttr(r.name)}"><span><span class="exercise-name">${escapeHtml(r.name||'名称未入力')}</span><div class="exercise-meta">${r.weight!==''?fmt(r.weight,1)+' kg':'重量記録なし'}${r.sets!==''?' ・ '+fmt(r.sets)+'セット':''}</div></span><span class="chevron">›</span></button>`).join('');
+ const groupedDay=groupByExerciseWeight(dayRows);
+ setText('selectedDateLabel',displayDate(selectedWorkoutDate));setText('selectedDayCount',groupedDay.length?`${new Set(dayRows.map(r=>r.name)).size}種目・${groupedDay.length}行`:'');
+ $('workoutEmpty').classList.toggle('hidden',groupedDay.length>0);
+ $('workoutList').innerHTML=groupedDay.map(g=>`<button class="exercise" data-exercise="${escapeAttr(g.name)}"><span><span class="exercise-name">${escapeHtml(g.name||'名称未入力')}</span><div class="exercise-meta">${g.weightLabel} ・ ${g.records.map(formatWorkoutEntry).join(' ／ ')}</div></span><span class="chevron">›</span></button>`).join('');
  $('workoutList').querySelectorAll('[data-exercise]').forEach(btn=>btn.addEventListener('click',()=>openDetail(btn.dataset.exercise)));
  $('nextMonth').disabled=key>=monthKey(new Date());
 }
 function openDetail(name){
  selectedExercise=name;const rows=appData.workouts.filter(r=>r.name===name).sort((a,b)=>b.date.localeCompare(a.date));
  if(!rows.length)return;setScreen('detail');setText('detailName',name);setText('detailPart',rows.find(r=>r.part)?.part||'種目詳細');
- renderChart(rows);$('historyList').innerHTML=rows.map(r=>`<div class="history-row"><div class="history-date">${displayDate(r.date,false)}</div><div class="history-main">${r.weight!==''?fmt(r.weight,1)+' kg':'自重'} × ${r.reps!==''?fmt(r.reps)+'回':'—回'} × ${r.sets!==''?fmt(r.sets)+'セット':'—セット'}${r.note?`<div class="history-note">${escapeHtml(r.note)}</div>`:''}</div></div>`).join('');
+ const groups=groupByExerciseWeight(rows);
+ $('historyList').innerHTML=groups.map(g=>`<div class="weight-history-group"><div class="weight-history-title">${g.weightLabel}</div>${g.records.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<div class="history-row"><div class="history-date">${displayDate(r.date,false)}</div><div class="history-main">${formatWorkoutEntry(r)}${r.note?`<div class="history-note">${escapeHtml(r.note)}</div>`:''}</div></div>`).join('')}</div>`).join('');
 }
-function weightLabel(r){return r.weight!==''?`${fmt(r.weight,1)} kg`:'重量記録なし'}
-function renderChart(rows){
- const canvas=$('progressChart'),ctx=canvas.getContext('2d'),sorted=rows.slice().sort((a,b)=>a.date.localeCompare(b.date)).filter(r=>r.weight!=='');
- const hasWeight=sorted.length>1;$('chartPanel').classList.toggle('hidden',!hasWeight);
- if(!hasWeight)return;
- const dpr=window.devicePixelRatio||1,w=canvas.clientWidth||320,h=220;canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
- const left=38,right=12,top=15,bottom=32,cw=w-left-right,ch=h-top-bottom;
- let min=Math.min(...sorted.map(r=>r.weight)),max=Math.max(...sorted.map(r=>r.weight));if(min===max){min=Math.max(0,min-1);max=max+1}else{const pad=(max-min)*.12;min=Math.max(0,min-pad);max+=pad}
- ctx.font='10px sans-serif';ctx.strokeStyle='#e4e8e4';ctx.fillStyle='#727a75';ctx.lineWidth=1;
- for(let i=0;i<4;i++){const y=top+ch*i/3;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();ctx.fillText(fmt(max-(max-min)*i/3,1),2,y+3)}
- const pts=sorted.map((r,i)=>({x:left+(i/Math.max(1,sorted.length-1))*cw,y:top+ch-(r.weight-min)/(max-min)*ch,r}));ctx.strokeStyle='#326b50';ctx.fillStyle='#326b50';ctx.lineWidth=2;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill()});
- const first=new Date(sorted[0].date+'T12:00:00'),last=new Date(sorted[sorted.length-1].date+'T12:00:00');ctx.fillStyle='#727a75';ctx.font='10px sans-serif';ctx.fillText(`${first.getMonth()+1}/${first.getDate()}`,left,h-8);const end=`${last.getMonth()+1}/${last.getDate()}`;ctx.fillText(end,w-right-ctx.measureText(end).width,h-8);
- setText('chartNote',`重量記録 ${sorted.length}回分。重量が入力されている記録のみ表示しています。`);
+function weightLabel(r){return r.weight!==''?`${fmt(r.weight,1)} kg`:'自重・重量記録なし'}
+function groupByExerciseWeight(rows){
+ const map=new Map();
+ rows.forEach(r=>{
+  const key=`${r.name}__${r.weight===''?'bodyweight':r.weight}`;
+  if(!map.has(key))map.set(key,{name:r.name,weight:r.weight,weightLabel:weightLabel(r),records:[]});
+  map.get(key).records.push(r);
+ });
+ return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name)||((a.weight===''?-Infinity:a.weight)-(b.weight===''?-Infinity:b.weight)));
+}
+function formatWorkoutEntry(r){
+ const reps=r.reps!==''?`${fmt(r.reps)}回`:'回数未記録';
+ const sets=r.sets!==''?`${fmt(r.sets)}セット`:'セット数未記録';
+ return `${reps} × ${sets}`;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function escapeAttr(s){return escapeHtml(s)}
