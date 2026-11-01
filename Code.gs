@@ -65,3 +65,48 @@ function num_(v) {
   const n = parseFloat(String(v || '').replace(/,/g,''));
   return isFinite(n) ? n : 0;
 }
+
+const WORKOUT_SHEET_NAME = '筋トレ記録';
+const WORKOUT_HEADERS = ['日付','種目','部位','重量(kg)','回数','セット数','メモ'];
+
+function getWorkoutData() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(WORKOUT_SHEET_NAME);
+  if (!sheet) throw new Error('シート「' + WORKOUT_SHEET_NAME + '」が見つかりません。');
+  const values = sheet.getDataRange().getValues();
+  if (!values.length) throw new Error('筋トレ記録シートにヘッダーがありません。');
+  const header = values[0].map(v => String(v).trim());
+  const idx = {};
+  WORKOUT_HEADERS.forEach(h => {
+    idx[h] = header.indexOf(h);
+    if (idx[h] < 0) throw new Error('筋トレ記録シートに必要な列がありません: ' + h);
+  });
+  const tz = Session.getScriptTimeZone() || 'Asia/Tokyo';
+  const rows = values.slice(1).reduce((out, row) => {
+    const rawDate = row[idx['日付']];
+    if (!rawDate) return out;
+    let date;
+    if (rawDate instanceof Date) date = Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd');
+    else {
+      const s = String(rawDate).trim();
+      const m = s.match(/^(\\d{4})[\\/-](\\d{1,2})[\\/-](\\d{1,2})/);
+      if (!m) return out;
+      date = m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
+    }
+    const exercise = String(row[idx['種目']] || '').trim();
+    if (!exercise) return out;
+    const weight = row[idx['重量(kg)']];
+    out.push({
+      date: date,
+      exercise: exercise,
+      bodyPart: String(row[idx['部位']] || ''),
+      weight: weight === '' || weight == null ? null : num_(weight),
+      reps: row[idx['回数']] === '' || row[idx['回数']] == null ? null : num_(row[idx['回数']]),
+      sets: row[idx['セット数']] === '' || row[idx['セット数']] == null ? null : num_(row[idx['セット数']]),
+      memo: String(row[idx['メモ']] || '')
+    });
+    return out;
+  }, []);
+  rows.sort((a,b) => b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise));
+  return { rows: rows, updatedAt: Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd HH:mm') };
+}
