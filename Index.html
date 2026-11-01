@@ -5,10 +5,15 @@
 main{max-width:760px;margin:auto;padding:22px 16px 44px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}h1{font-size:23px;margin:0;letter-spacing:-.03em}small,.muted{color:var(--muted)}.tabs{display:flex;gap:7px;margin:18px 0}.tabs button{flex:1;padding:10px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--muted);font-weight:600}.tabs button.active{background:var(--ink);border-color:var(--ink);color:white}
 .panel{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0}.eyebrow{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.06em}.hero{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:7px 0 12px}.big{font-size:34px;font-weight:750;letter-spacing:-.04em}.goal{font-size:13px;color:var(--muted)}.track{height:8px;border-radius:9px;background:#edf0ed;overflow:hidden}.fill{height:100%;background:var(--green);border-radius:9px}.pfc-scale{position:relative;margin-top:16px;padding-bottom:14px}.pfc-stack{display:flex;height:16px;overflow:hidden;border-radius:5px;background:#edf0ed;position:relative}.pfc-seg{height:100%;min-width:0;transition:width .2s}.pfc-goalmark{position:absolute;right:0;top:0;height:16px;width:2px;background:var(--ink);z-index:2}.pfc-scale-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:3px}.pfc-p{background:#4f83cc}.pfc-f{background:#e5a23b}.pfc-c{background:#45a779}.pfc-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:9px}.pfc-key{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);white-space:nowrap}.pfc-dot{width:8px;height:8px;border-radius:3px;flex:none}.pfc-key b{color:var(--ink);font-weight:650;margin-left:auto}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.metric{background:var(--bg);padding:12px;border-radius:12px;min-width:0}.metric b{display:block;font-size:20px;white-space:nowrap}.metric span{font-size:12px;color:var(--muted)}.sectionhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}h2{font-size:17px;margin:0 0 12px}.list{display:grid;gap:9px}.day{display:grid;grid-template-columns:66px 1fr 70px;align-items:center;gap:10px;font-size:12px}.barbg{height:9px;background:#edf0ed;border-radius:9px;overflow:hidden}.bar{height:100%;background:var(--green);border-radius:9px}.day.missing{opacity:.6}.day.missing .barbg{background:repeating-linear-gradient(135deg,#e4e8e4,#e4e8e4 4px,#fff 4px,#fff 8px)}.right{text-align:right;font-variant-numeric:tabular-nums}.summary{font-size:13px;color:var(--muted);margin-top:12px}.error{background:#fff0ed;color:#922f20;padding:14px;border-radius:12px}.hidden{display:none}.badge{font-size:11px;background:var(--soft);color:var(--green);padding:3px 7px;border-radius:7px}
 @media(min-width:600px){main{padding-top:32px}.panel{padding:22px}.big{font-size:42px}}
+
+/* Workout view */
+.topnav{display:flex;gap:8px;margin:16px 0 10px}.topnav button{flex:1;padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--muted);font-weight:700}.topnav button.active{background:var(--green);border-color:var(--green);color:#fff}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.calendar-head button,.backbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 11px;color:var(--ink)}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday{text-align:center;color:var(--muted);font-size:11px;padding:4px 0}.calday{position:relative;min-height:42px;border:1px solid transparent;border-radius:10px;background:#f6f8f6;color:var(--ink);font:inherit}.calday.other{opacity:.3}.calday.selected{background:var(--soft);border-color:var(--green);font-weight:750}.calday.haslog:after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:var(--green);bottom:4px;left:calc(50% - 2px)}.calday.selected:after{background:var(--green)}
+.exercise-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-top:0;border-left:0;border-right:0;text-align:left;color:inherit;font:inherit}.exercise-row:last-child{border-bottom:0}.exercise-row b{display:block}.exercise-row small{display:block;margin-top:3px}.exercise-row .chevron{color:var(--muted);font-size:20px}.record-date{font-weight:750;margin:17px 0 8px}.record-date:first-child{margin-top:0}.record-table{width:100%;border-collapse:collapse;font-size:13px}.record-table th,.record-table td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.record-table th{color:var(--muted);font-weight:600;font-size:11px}.record-table td:first-child{font-weight:650}.detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}.detail-stat{background:var(--bg);padding:12px;border-radius:12px}.detail-stat b{display:block;font-size:20px}.detail-stat span{font-size:12px;color:var(--muted)}.memo{color:var(--muted);font-size:12px;white-space:pre-wrap}.empty{text-align:center;color:var(--muted);padding:25px 10px;font-size:13px}
 </style></head><body><main>
 <header><div><h1>食事ログ</h1><small id="stamp">読み込み中…</small></div><span class="badge">READ ONLY</span></header>
 <div id="error" class="error hidden"></div>
-<nav class="tabs"><button class="active" data-tab="today">今日</button><button data-tab="week">7日間</button><button data-tab="month">30日間</button></nav>
+<nav class="topnav"><button id="mealNav" class="active">食事</button><button id="workoutNav">筋トレ</button></nav>\n<nav class="tabs" id="mealTabs"><button class="active" data-tab="today">今日</button><button data-tab="week">7日間</button><button data-tab="month">30日間</button></nav>
 <section id="today">
 <div class="panel"><div class="eyebrow">TODAY'S INTAKE</div><div class="hero"><div><span class="big" id="kcal">—</span> <span class="muted">kcal</span></div><div class="goal">目標 <span id="goalKcal">1,750</span> kcal</div></div><div class="track"><div id="kcalFill" class="fill" style="width:0%"></div></div><div class="pfc-scale"><div class="pfc-stack" aria-label="PFC目標カロリーを最大目盛りとした摂取量"><div id="pSeg" class="pfc-seg pfc-p" style="width:0%"></div><div id="fSeg" class="pfc-seg pfc-f" style="width:0%"></div><div id="cSeg" class="pfc-seg pfc-c" style="width:0%"></div></div><div class="pfc-goalmark"></div><div class="pfc-scale-label"><span id="pfcCurrent">摂取 0 kcal</span><span id="pfcGoal">目標 1,720 kcal</span></div></div><div class="pfc-legend"><div class="pfc-key"><i class="pfc-dot pfc-p"></i>P <b id="pLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-f"></i>F <b id="fLegend">—</b></div><div class="pfc-key"><i class="pfc-dot pfc-c"></i>C <b id="cLegend">—</b></div></div><p class="summary" style="margin-top:6px">色付き部分が摂取量、右端の目盛りがPFC目標量</p><div class="grid" style="margin-top:16px">
 <div class="metric"><span>たんぱく質 P</span><b id="p">—</b><span>目標 <span id="goalP">75</span> g</span></div><div class="metric"><span>脂質 F</span><b id="f">—</b><span>目標 <span id="goalF">60</span> g</span></div><div class="metric"><span>炭水化物 C</span><b id="c">—</b><span>目標 <span id="goalC">220</span> g</span></div></div><p id="todayNote" class="summary"></p></div>
@@ -16,8 +21,31 @@ main{max-width:760px;margin:auto;padding:22px 16px 44px}header{display:flex;just
 </section>
 <section id="week" class="hidden"><div class="panel"><div class="sectionhead"><h2>直近7日間</h2><small>記録日ベース</small></div><div id="weekList" class="list"></div><p id="weekNote" class="summary"></p></div></section>
 <section id="month" class="hidden"><div class="panel"><div class="sectionhead"><h2>直近30日間</h2><small>kcal / 日</small></div><div id="monthList" class="list"></div><p id="monthNote" class="summary"></p></div><div class="panel"><h2>記録日の平均</h2><div class="grid"><div class="metric"><span>カロリー</span><b id="avgKcal">—</b><span>kcal / 日</span></div><div class="metric"><span>たんぱく質</span><b id="avgP">—</b><span>g / 日</span></div><div class="metric"><span>脂質</span><b id="avgF">—</b><span>g / 日</span></div></div><p id="avgNote" class="summary"></p></div></section>
+
+<section id="workoutSection" class="hidden">
+  <div id="workoutCalendarView">
+    <div class="panel">
+      <div class="calendar-head"><button id="prevMonth" aria-label="前月">‹</button><h2 id="calendarTitle" style="margin:0"></h2><button id="nextMonth" aria-label="翌月">›</button></div>
+      <div class="calendar" id="calendarGrid"></div>
+      <p class="summary">● は筋トレ記録がある日</p>
+    </div>
+    <div class="panel">
+      <div class="sectionhead"><h2 id="selectedDateTitle">日付を選択</h2><small id="selectedDayCount"></small></div>
+      <div id="selectedDayExercises"></div>
+    </div>
+  </div>
+  <div id="workoutDetailView" class="hidden">
+    <button class="backbtn" id="backToWorkout">‹ カレンダーに戻る</button>
+    <div class="panel">
+      <div class="eyebrow">EXERCISE HISTORY</div><h2 id="exerciseTitle" style="font-size:22px;margin:5px 0 0"></h2>
+      <div class="detail-stats"><div class="detail-stat"><span>直近の最大重量</span><b id="latestMax">—</b></div><div class="detail-stat"><span>前回比</span><b id="maxChange">—</b></div></div>
+      <p class="summary">重量が記録されているセットのみ比較します。自重など重量未入力の記録は履歴にそのまま表示します。</p>
+    </div>
+    <div class="panel"><h2>トレーニング履歴</h2><div id="exerciseHistory"></div></div>
+  </div>
+</section>
 </main><script>
-let data=null;
+let data=null;\nlet workoutRows=[];\nlet calendarMonth=new Date(); calendarMonth.setDate(1);\nlet selectedWorkoutDate='';
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>Number(n||0).toLocaleString('ja-JP',{maximumFractionDigits:d,minimumFractionDigits:d});
 function goals(){return {kcal:+$('setKcal').value||1750,p:+$('setP').value||75,f:+$('setF').value||60,c:+$('setC').value||220}}
@@ -41,5 +69,63 @@ const a=data.averages30;$('avgKcal').textContent=a.days?fmt(a.kcal):'—';$('avg
 function drawList(id,days){const max=Math.max(1,...days.filter(d=>d.recorded).map(d=>d.kcal));$(id).innerHTML=days.map(d=>{const dt=new Date(d.date+'T12:00:00');const label=(dt.getMonth()+1)+'/'+dt.getDate();return '<div class="day '+(!d.recorded?'missing':'')+'"><span>'+label+'</span><div class="barbg"><div class="bar" style="width:'+(d.recorded?Math.max(1,d.kcal/max*100):0)+'%"></div></div><span class="right">'+(d.recorded?fmt(d.kcal)+' kcal':'未記録')+'</span></div>'}).join('')}
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['today','week','month'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))}));
 $('saveGoals').addEventListener('click',saveGoals);loadGoals();
-google.script.run.withSuccessHandler(d=>{data=d;$('stamp').textContent='更新 '+d.updatedAt;render()}).withFailureHandler(e=>{$('error').textContent='データを読み込めませんでした: '+(e&&e.message?e.message:String(e));$('error').classList.remove('hidden');$('stamp').textContent='読み込み失敗'}).getDashboardData();
+
+let workoutRows=[];
+let calendarMonth=new Date(); calendarMonth.setDate(1);
+let selectedWorkoutDate='';
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const dateLabel=s=>{const [y,m,d]=s.split('-').map(Number);return y+'年'+m+'月'+d+'日'};
+const weightLabel=v=>v==null?'—':fmt(v, v%1?1:0)+'kg';
+function groupByExercise(rows){const map=new Map();rows.forEach(r=>{if(!map.has(r.exercise))map.set(r.exercise,[]);map.get(r.exercise).push(r)});return map}
+function renderCalendar(){
+ const y=calendarMonth.getFullYear(),m=calendarMonth.getMonth();
+ $('calendarTitle').textContent=y+'年 '+(m+1)+'月';
+ const first=new Date(y,m,1),start=new Date(y,m,1-first.getDay());
+ const logged=new Set(workoutRows.map(r=>r.date));
+ const weekdays=['日','月','火','水','木','金','土'];
+ let html=weekdays.map(w=>'<div class="weekday">'+w+'</div>').join('');
+ for(let i=0;i<42;i++){const dt=new Date(start);dt.setDate(start.getDate()+i);const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');html+='<button class="calday '+(dt.getMonth()!==m?'other ':'')+(key===selectedWorkoutDate?'selected ':'')+(logged.has(key)?'haslog':'')+'" data-date="'+key+'">'+dt.getDate()+'</button>'}
+ $('calendarGrid').innerHTML=html;
+ $('calendarGrid').querySelectorAll('[data-date]').forEach(b=>b.addEventListener('click',()=>{selectedWorkoutDate=b.dataset.date;renderCalendar();renderSelectedDay()}));
+}
+function renderSelectedDay(){
+ const rows=workoutRows.filter(r=>r.date===selectedWorkoutDate);
+ $('selectedDateTitle').textContent=dateLabel(selectedWorkoutDate);
+ $('selectedDayCount').textContent=rows.length?rows.length+' 記録':'';
+ if(!rows.length){$('selectedDayExercises').innerHTML='<div class="empty">この日の筋トレ記録はありません。</div>';return}
+ const groups=groupByExercise(rows);
+ $('selectedDayExercises').innerHTML=Array.from(groups.entries()).map(([name,items])=>{
+  const summary=items.map(r=>weightLabel(r.weight)+' × '+(r.reps==null?'—':r.reps+'回')+' × '+(r.sets==null?'—':r.sets+'セット')).join(' / ');
+  return '<button class="exercise-row" data-exercise="'+esc(name)+'"><span><b>'+esc(name)+'</b><small>'+summary+'</small></span><span class="chevron">›</span></button>'
+ }).join('');
+ $('selectedDayExercises').querySelectorAll('[data-exercise]').forEach(b=>b.addEventListener('click',()=>showExercise(b.dataset.exercise)));
+}
+function showExercise(name){
+ const all=workoutRows.filter(r=>r.exercise===name).sort((a,b)=>b.date.localeCompare(a.date));
+ const dates=[...new Set(all.map(r=>r.date))];
+ const sessionMax=dates.slice(0,2).map(date=>{const weights=all.filter(r=>r.date===date&&r.weight!=null).map(r=>r.weight);return weights.length?Math.max(...weights):null});
+ $('exerciseTitle').textContent=name;
+ $('latestMax').textContent=sessionMax[0]==null?'重量記録なし':weightLabel(sessionMax[0]);
+ if(sessionMax[0]!=null&&sessionMax[1]!=null){const diff=sessionMax[0]-sessionMax[1];$('maxChange').textContent=(diff>0?'+':'')+fmt(diff,diff%1?1:0)+'kg'}else $('maxChange').textContent='比較不可';
+ $('exerciseHistory').innerHTML=dates.map(date=>{
+  const items=all.filter(r=>r.date===date);
+  return '<div class="record-date">'+dateLabel(date)+'</div><table class="record-table"><thead><tr><th>重量</th><th>回数</th><th>セット数</th><th>メモ</th></tr></thead><tbody>'+items.map(r=>'<tr><td>'+weightLabel(r.weight)+'</td><td>'+(r.reps==null?'—':esc(r.reps)+'回')+'</td><td>'+(r.sets==null?'—':esc(r.sets))+'</td><td class="memo">'+esc(r.memo)+'</td></tr>').join('')+'</tbody></table>'
+ }).join('');
+ $('workoutCalendarView').classList.add('hidden');$('workoutDetailView').classList.remove('hidden');
+}
+function loadWorkout(){
+ google.script.run.withSuccessHandler(d=>{
+  workoutRows=d.rows||[];
+  $('stamp').textContent='筋トレ更新 '+d.updatedAt;
+  const latest=workoutRows.length?workoutRows[0].date:new Date().toISOString().slice(0,10);
+  selectedWorkoutDate=latest;calendarMonth=new Date(latest+'T12:00:00');calendarMonth.setDate(1);
+  renderCalendar();renderSelectedDay();
+ }).withFailureHandler(e=>{$('error').textContent='筋トレ記録を読み込めませんでした: '+(e&&e.message?e.message:String(e));$('error').classList.remove('hidden')}).getWorkoutData();
+}
+$('mealNav').addEventListener('click',()=>{$('mealNav').classList.add('active');$('workoutNav').classList.remove('active');$('mealTabs').classList.remove('hidden');$('today').classList.remove('hidden');$('week').classList.add('hidden');$('month').classList.add('hidden');$('workoutSection').classList.add('hidden');$('stamp').textContent=data?'更新 '+data.updatedAt:'読み込み中…'});
+$('workoutNav').addEventListener('click',()=>{$('workoutNav').classList.add('active');$('mealNav').classList.remove('active');$('mealTabs').classList.add('hidden');['today','week','month'].forEach(id=>$(id).classList.add('hidden'));$('workoutSection').classList.remove('hidden');$('workoutCalendarView').classList.remove('hidden');$('workoutDetailView').classList.add('hidden');if(!workoutRows.length)loadWorkout();else{$('stamp').textContent='筋トレ記録';renderCalendar();renderSelectedDay()}});
+$('prevMonth').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()-1);renderCalendar()});
+$('nextMonth').addEventListener('click',()=>{calendarMonth.setMonth(calendarMonth.getMonth()+1);renderCalendar()});
+$('backToWorkout').addEventListener('click',()=>{$('workoutDetailView').classList.add('hidden');$('workoutCalendarView').classList.remove('hidden')});
+\ngoogle.script.run.withSuccessHandler(d=>{data=d;$('stamp').textContent='更新 '+d.updatedAt;render()}).withFailureHandler(e=>{$('error').textContent='データを読み込めませんでした: '+(e&&e.message?e.message:String(e));$('error').classList.remove('hidden');$('stamp').textContent='読み込み失敗'}).getDashboardData();
 </script></body></html>
